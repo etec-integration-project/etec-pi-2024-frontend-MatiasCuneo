@@ -35,7 +35,7 @@ export const Footer = () => {
           </Link>
         </div>
       </div>
-      <p className="py-8 text-center text-sm text-gray-400">2024-Presente Green Invitations</p>
+      <p className="py-8 text-center text-sm text-gray-400">2024-Presente IA Testing</p>
     </footer>
   );
 };

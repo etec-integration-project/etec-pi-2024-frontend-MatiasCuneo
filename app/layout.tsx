@@ -14,8 +14,8 @@ const inter = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Green Invitations",
-  description: "Crea invitaciones personalizables a tu casamiento!",
+  title: "IA Testing",
+  description: "Crea configuraciones personalizadas para tu propia Inteligencia Artificial!",
 };
 
 export default async function RootLayout({
@@ -30,7 +30,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <header className="bg-white w-full lg:pb-12 mx-auto lg:px-[10rem] px-4 md:py-8 flex items-center justify-between py-4 fixed top-0 z-10">
           <Link href="/" className="inline-flex items-center gap-2.5 text-2xl font-bold text-black md:text-3xl">
-            GreenInv
+            IA Testing
           </Link>
           {session && (
             <SessionProvider session={session}>

@@ -1,5 +1,4 @@
 import NextAuth, { type DefaultSession } from "next-auth"
-import { UserRole } from "@prisma/client";
 import { PrismaAdapter } from '@auth/prisma-adapter'
 
 import { getUserById } from "@/data/user";
@@ -46,10 +45,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         session.user.id = token.sub;
       }
 
-      if (token.role && session.user) {
-        session.user.role = token.role as UserRole;
-      }
-
       if (session.user) {
         session.user.isTFAEnabled = token.isTFAEnabled as boolean;
         session.user.name = token.name;
@@ -72,7 +67,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       token.isOAuth = !!existingAccount;
       token.name = user.name;
       token.email = user.email;
-      token.role = user.role;
       token.isTFAEnabled = user.isTFAEnabled;
 
       return token;
