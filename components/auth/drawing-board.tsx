@@ -1,8 +1,16 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
+import { Button } from '../ui/button';
+import { predict } from '@/actions/prediction';
 
-export const DrawingBoard = () => {
+interface DrawingBoardProps {
+  onPredict: any;
+};
+
+export const DrawingBoard = ({
+  onPredict,
+}: DrawingBoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -50,15 +58,23 @@ export const DrawingBoard = () => {
   };
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={200}
-      height={200}
-      onMouseDown={startDrawing}
-      onMouseUp={stopDrawing}
-      onMouseMove={draw}
-      onMouseLeave={() => setIsDrawing(false)}
-      style={{ border: '1px solid black' }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        width={200}
+        height={200}
+        onMouseDown={startDrawing}
+        onMouseUp={stopDrawing}
+        onMouseMove={draw}
+        onMouseLeave={() => setIsDrawing(false)}
+        style={{ border: '1px solid black' }}
+      />
+      <Button
+        size='xlg'
+        onClick={() => onPredict(predict)}
+      >
+        Predicción
+      </Button>
+    </>
   );
 };
