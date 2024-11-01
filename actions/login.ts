@@ -25,13 +25,13 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     return { error: "Email no registrado" };
   }
 
-  if (!existingUser.emailVerified) {
-    const verificationToken = await generateVerificationToken(existingUser.email);
+  // if (!existingUser.emailVerified) {
+  //   const verificationToken = await generateVerificationToken(existingUser.email);
 
-    await sendVerificationMail(verificationToken.email, verificationToken.token);
+  //   await sendVerificationMail(verificationToken.email, verificationToken.token);
 
-    return { success: "Email de confirmacion enviado!" }
-  }
+  //   return { success: "Email de confirmacion enviado!" }
+  // }
 
   if (existingUser.isTFAEnabled && existingUser.email) {
     if (code) {
