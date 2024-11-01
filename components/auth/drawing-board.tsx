@@ -22,7 +22,7 @@ export const DrawingBoard = () => {
       formData.append('image', blob, 'drawing.png');
 
       try {
-        const response = await fetch('/app/predict', {
+        const response = await fetch('/tf/predict', {
           method: 'POST',
           body: formData,
         });
