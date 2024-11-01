@@ -3,17 +3,39 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { predict } from '@/actions/prediction';
+import { FormSuccess } from '../form-success';
 
-interface DrawingBoardProps {
-  onPredict: any;
-};
-
-export const DrawingBoard = ({
-  onPredict,
-}: DrawingBoardProps) => {
+export const DrawingBoard = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [prediction, setPrediction] = useState<any | null>(null);
+
+  const handlePrediction = () => {
+    const canvas = canvasRef.current;
+
+    canvas!.toBlob(async (blob) => {
+      const formData = new FormData();
+
+      if (!blob) return;
+
+      formData.append('image', blob, 'drawing.png');
+
+      try {
+        const response = await fetch('/app/predict', {
+          method: 'POST',
+          body: formData,
+        });
+
+        console.log('REACHED');
+
+        const data = await response.json();
+        setPrediction(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }, 'image/png');
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -69,9 +91,12 @@ export const DrawingBoard = ({
         onMouseLeave={() => setIsDrawing(false)}
         style={{ border: '1px solid black' }}
       />
+      {prediction && (
+        <FormSuccess message={prediction}/>
+      )}
       <Button
         size='xlg'
-        onClick={() => onPredict(predict)}
+        onClick={handlePrediction}
       >
         Predicción
       </Button>
