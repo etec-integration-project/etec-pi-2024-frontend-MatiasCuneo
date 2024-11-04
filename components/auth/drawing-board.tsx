@@ -2,7 +2,6 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '../ui/button';
-import { predict } from '@/actions/prediction';
 import { FormSuccess } from '../form-success';
 
 export const DrawingBoard = () => {
@@ -19,7 +18,7 @@ export const DrawingBoard = () => {
 
       if (!blob) return;
 
-      formData.append('image', blob, 'drawing.png');
+      formData.append('file', blob, 'file.png');
 
       try {
         const response = await fetch('/tf/predict', {
@@ -27,9 +26,9 @@ export const DrawingBoard = () => {
           body: formData,
         });
 
-        console.log('REACHED');
-
+        
         const data = await response.json();
+        console.log(data);
         setPrediction(data);
       } catch (error) {
         console.log(error);
