@@ -8,7 +8,7 @@ interface LogoutButtonProps {
 
 export const LogoutButton = ({ children }: LogoutButtonProps) => {
   return (
-    <span onClick={() => signOut()} className="cursor-pointer">
+    <span onClick={() => signOut({ callbackUrl: '/' })} className="cursor-pointer">
       {children}
     </span>
   );
