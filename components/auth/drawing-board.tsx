@@ -25,11 +25,10 @@ export const DrawingBoard = () => {
           method: 'POST',
           body: formData,
         });
-
         
         const data = await response.json();
         console.log(data);
-        setPrediction(data);
+        if (data.success) setPrediction(data.success);
       } catch (error) {
         console.log(error);
       }
@@ -49,9 +48,11 @@ export const DrawingBoard = () => {
     
     const ctx = canvas.getContext('2d');
 
-    ctx!.lineWidth = 20;
+    ctx!.lineWidth = 30;
     ctx!.lineCap = 'round';
     ctx!.strokeStyle = 'black';
+    ctx!.fillStyle = 'white';
+    ctx!.fillRect(0, 0, canvas.width, canvas.height);
     contextRef.current = ctx;
   }, []);
 
@@ -66,6 +67,16 @@ export const DrawingBoard = () => {
   const stopDrawing = () => {
     contextRef.current!.closePath();
     setIsDrawing(false);
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+
+    if (!canvas) return;
+
+    contextRef.current!.clearRect(0, 0, canvas.width, canvas.height);
+    contextRef.current!.fillStyle = 'white';
+    contextRef.current!.fillRect(0, 0, canvas.width, canvas.height);
   };
 
   const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -90,15 +101,24 @@ export const DrawingBoard = () => {
         onMouseLeave={() => setIsDrawing(false)}
         style={{ border: '1px solid black' }}
       />
-      {prediction && (
-        <FormSuccess message={prediction}/>
+      {(prediction || prediction === 0) && (
+        <FormSuccess big message={prediction}/>
       )}
-      <Button
-        size='xlg'
-        onClick={handlePrediction}
-      >
-        Predicción
-      </Button>
+      <div className="flex gap-5">
+        <Button
+          size='xlg'
+          onClick={handlePrediction}
+        >
+          Predicción
+        </Button>
+        <Button
+          size='xlg'
+          variant='outline'
+          onClick={clearCanvas}
+        >
+          Limpiar
+        </Button>
+      </div>
     </>
   );
 };
