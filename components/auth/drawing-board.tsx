@@ -9,6 +9,7 @@ export const DrawingBoard = () => {
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [prediction, setPrediction] = useState<any | null>(null);
+  const [incorrectPredictions, setIncorrectPredictions] = useState<any[]>([]);
 
   const handlePrediction = () => {
     const canvas = canvasRef.current;
@@ -35,7 +36,26 @@ export const DrawingBoard = () => {
     }, 'image/png');
   };
 
+  const saveIncorrectPrediction = () => {
+    const canvas = canvasRef.current;
+
+    if (!canvas || !prediction) return;
+
+    const imgData = canvas.toDataURL('image/png');
+    const newIncorrectPrediction = { img: imgData, prediction: prediction };
+    const updatedPredictions = [...incorrectPredictions, newIncorrectPrediction];
+
+    setIncorrectPredictions(updatedPredictions);
+    localStorage.setItem('incorrectPredictions', JSON.stringify(updatedPredictions));
+    setPrediction(null);
+    clearCanvas();
+    location.reload();
+  };
+
   useEffect(() => {
+    const savedPredictions = JSON.parse(localStorage.getItem('incorrectPredictions') || '[]');
+    setIncorrectPredictions(savedPredictions);
+
     const canvas = canvasRef.current;
 
     if (!canvas) return;
@@ -90,7 +110,7 @@ export const DrawingBoard = () => {
   };
 
   return (
-    <>
+    <div className='w-1/2 h-full flex flex-col items-center gap-4'>
       <canvas
         ref={canvasRef}
         width={200}
@@ -102,9 +122,25 @@ export const DrawingBoard = () => {
         style={{ border: '1px solid black' }}
       />
       {(prediction || prediction === 0) && (
-        <FormSuccess big message={prediction}/>
+        <div className="flex gap-5 justify-center items-center">
+          <FormSuccess big message={prediction}/>
+          <Button
+            variant='secondary'
+            size='lg'
+            onClick={() => setPrediction(null)}
+          >
+            Correcto
+          </Button>
+          <Button
+            variant='destructive'
+            size='lg'
+            onClick={saveIncorrectPrediction}
+          >
+            Incorrecto
+          </Button>
+        </div>
       )}
-      <div className="flex gap-5">
+      <div className="flex gap-5 justify-center items-center">
         <Button
           size='xlg'
           onClick={handlePrediction}
@@ -119,6 +155,6 @@ export const DrawingBoard = () => {
           Limpiar
         </Button>
       </div>
-    </>
+    </div>
   );
 };
