@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:alpine
+    volumes:
+      - /tmp/data/:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=app
+      - TZ=America/Argentina/Mendoza
+    networks:
+      - cuneo-compose
+
+  tensorflow:
+    build:
+      context: https://github.com/etec-integration-project/etec-pi-2024-backend-MatiasCuneo.git
+    environment:
+      - HOST=postgres
+    networks:
+      - cuneo-compose
+    
+  frontend:
+    build:
+      context: https://github.com/etec-integration-project/etec-pi-2024-frontend-MatiasCuneo.git
+    depends_on:
+      - tensorflow
+    environment:
+      - DATABASE_URL=postgresql://greeninv_owner:NKgW92MpoLrc@ep-gentle-river-a5crqmnp-pooler.us-east-2.aws.neon.tech/greeninv?sslmode=require
+      - DIRECT_URL=postgresql://greeninv_owner:NKgW92MpoLrc@ep-gentle-river-a5crqmnp.us-east-2.aws.neon.tech/greeninv?sslmode=require
+      - AUTH_SECRET=PKHiAnvkEAAfJleXR10TH2Fr8Tsb4gGRvVj8ig8HqA
+      - GOOGLE_CLIENT_ID=94128269157-p5ts2gtg496frigeji6c3pib5ietjf4c.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
+      - RESEND_API_KEY=re_2891FMtQ_Bi6VancGCDHkTuG3qDQanyD6
+    stdin_open: true
+    tty: true
+    networks:
+      - cuneo-compose
+
+  proxy:
+    build: https://raw.githubusercontent.com/etec-integration-project/etec-pi-2024-backend-MatiasCuneo/main/nginx/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - tensorflow
+    networks:
+      - cuneo-compose
+
+networks:
+  cuneo-compose:
+    driver: bridge
